@@ -29,7 +29,7 @@ public class InstantController {
     public ResponseEntity<String> getDate(@RequestBody ReqBody body) throws JsonProcessingException {
 
         Map<String, Object> respMap = new HashMap<>();
-        respMap.put("fdate", getDateTime(body.getMs(), 0));
+        respMap.put("fdate", getDateTime(body.getMs()));
         respMap.put("zoneId", timeZone);
 
         return new ResponseEntity<>(mapper.writeValueAsString(respMap), HttpStatus.OK);
@@ -43,11 +43,13 @@ public class InstantController {
      * @throws JsonProcessingException
      */
     @GetMapping(value = "/msbyparam", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getMinusDate(@RequestParam("ms") Instant ms,
+    public ResponseEntity<String> getDateByParam(@RequestParam("ms") Instant ms,
                                                @RequestParam("hours") int hours) throws JsonProcessingException {
 
+        Instant minus = ms.minus(hours, ChronoUnit.HOURS);
+
         Map<String, Object> respMap = new HashMap<>();
-        respMap.put("fdate", getDateTime(ms, hours));
+        respMap.put("fdate", getDateTime(minus));
         respMap.put("zoneId", timeZone);
 
         return new ResponseEntity<>(mapper.writeValueAsString(respMap), HttpStatus.OK);
@@ -61,18 +63,19 @@ public class InstantController {
      * @throws JsonProcessingException
      */
     @PostMapping(value = "/msbybody", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getMinusDate2(@RequestBody ReqBody body) throws JsonProcessingException {
+    public ResponseEntity<String> getDateByBody(@RequestBody ReqBody body) throws JsonProcessingException {
+
+        Instant minus = body.getMs().minus(body.getMinus_hours(), ChronoUnit.HOURS);
 
         Map<String, Object> respMap = new HashMap<>();
-        respMap.put("fdate", getDateTime(body.getMs(), body.getMinus_hours()));
+        respMap.put("fdate", getDateTime(minus));
         respMap.put("zoneId", timeZone);
 
         return new ResponseEntity<>(mapper.writeValueAsString(respMap), HttpStatus.OK);
     }
 
-    private String getDateTime(Instant ms, int hours) {
-        Instant minus = ms.minus(hours, ChronoUnit.HOURS);
-        ZonedDateTime zd = ZonedDateTime.ofInstant(minus, ZoneId.of(timeZone));
+    private String getDateTime(Instant date) {
+        ZonedDateTime zd = ZonedDateTime.ofInstant(date, ZoneId.of(timeZone));
         return zd.format(dateTimeFormatter);
     }
 }
