@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: provider
+  # -------------- rabbitmq 配置
+  rabbitmq:
+    host: 127.0.01
+    port: 5672
+    username: guest
+    password: guest
+    virtualHost: /
+
+    # 生產者消息確認機制
+    publisher-confirm-type: correlated # 相關確認模式，發佈消息成功到Exchange後會觸發回調方法
+    publisher-returns: true # 開啟消息退回機制， 在消息沒有被路由到指定的queue時將消息返回，而不是丟棄
+    template:
+      mandatory: true # 標記生產者消息為强制性的，確保消息始終被處理，指定消息在沒有被隊列接收時是否強行退回還是直接丟棄

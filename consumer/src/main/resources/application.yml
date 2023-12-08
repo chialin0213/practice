@@ -1,0 +1,29 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: consumer
+  # -------------- rabbitmq 配置
+  rabbitmq:
+    host: 127.0.01
+    port: 5672
+    username: guest
+    password: guest
+    virtualHost: /
+
+    # 消息接收设置
+    listener:
+      simple:
+        prefetch: 1 # 消息预取限制，控制预取消息的上限，处理完才可以继续获取
+
+        # 消費者消息確認機制
+        acknowledge-mode: auto # 自動 ack，由 spring 檢測 listener 代码是否出现異常，没有異常則返回 ack；抛出異常則返回 nack
+
+        # 配置 retry ,消費者失敗重試
+        retry:
+          enabled: true # 開啟消費者失败重試
+          initial-interval: 1000 # 初次的失敗等待時長
+          multiplier: 1 # 下次失敗的等待時長倍數，下次等待時長 = multiplier * initial-interval
+          max-attempts: 3 # 最大重試次數
+          stateless: true # true：無狀態; false 有狀態。如果業務中包含事務，这里改為 false
