@@ -58,7 +58,7 @@ public class SwaggerController {
         return new ResponseEntity<>(mapper.writeValueAsString(cars), HttpStatus.CREATED);
     }
 
-    //@ApiIgnore
+    @ApiIgnore
     @GetMapping("/error")
     public void empty(){
         throw new RuntimeException("異常");
