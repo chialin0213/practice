@@ -1,4 +1,4 @@
-package com.example.demo.instant;
+package org.example;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
