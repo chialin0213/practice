@@ -1,0 +1,4 @@
+
+#不改成ant_path_matcher,啟動會出現swagger錯
+#預設應該是PathPattern
+spring.mvc.pathmatch.matching-strategy: ant_path_matcher
