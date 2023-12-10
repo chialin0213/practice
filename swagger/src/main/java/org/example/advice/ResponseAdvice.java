@@ -30,10 +30,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @SneakyThrows
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
-        if(body instanceof String) {
-            return objectMapper.writeValueAsString(RespData.success(body));
-        }
-
         return RespData.success(body);
     }
 }

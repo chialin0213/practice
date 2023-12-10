@@ -36,17 +36,17 @@ public class SwaggerController {
             @ApiImplicitParam(name = "brand", value = "車子品牌", required = true, dataType = "String")
     })
     @GetMapping("/getCars/{brand}")
-    public ResponseEntity<String> getCarByBrand(@PathVariable("brand") String brand) throws JsonProcessingException {
+    public ResponseEntity<Object> getCarByBrand(@PathVariable("brand") String brand) throws JsonProcessingException {
 
-        return new ResponseEntity<>(mapper.writeValueAsString(cars.get(brand)), HttpStatus.OK);
+        return new ResponseEntity<>(cars.get(brand), HttpStatus.OK);
     }
 
     @ApiOperation(value = "新增車子資訊", notes = "新增品牌及車子型號")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "body", value = "新增車子資訊", required = true, dataType = "ReqBody")
     })
-    @PostMapping(name = "/addCar", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> addCarBrand(@RequestBody ReqBody body) throws JsonProcessingException {
+    @PostMapping("/addCar")
+    public ResponseEntity<Object> addCarBrand(@RequestBody ReqBody body) throws JsonProcessingException {
 
         if(cars.containsKey(body.getBrand())){
             cars.get(body.getBrand()).add(body.getModel());
@@ -55,10 +55,10 @@ public class SwaggerController {
         }else{
             cars.put(body.getBrand(), Arrays.asList(body.getModel()));
         }
-        return new ResponseEntity<>(mapper.writeValueAsString(cars), HttpStatus.CREATED);
+        return new ResponseEntity<>(cars, HttpStatus.CREATED);
     }
 
-    @ApiIgnore
+    //@ApiIgnore
     @GetMapping("/error")
     public void empty(){
         throw new RuntimeException("異常");
