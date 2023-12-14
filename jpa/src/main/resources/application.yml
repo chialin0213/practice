@@ -1,0 +1,16 @@
+spring:
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    username:
+    password:
+    timeout: 5000
+    jedis:
+      pool:
+        max-active: 30
+        max-idle: 30
+        min-idle: 10
+        max-wait: -1
