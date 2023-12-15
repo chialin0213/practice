@@ -14,3 +14,13 @@ spring:
         max-idle: 30
         min-idle: 10
         max-wait: -1
+
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Taipei
+    username: root
+    password: root123
+    driver-class-name: com.mysql.cj.jdbc.Driver #驱动
+    jpa:
+      hibernate:
+        ddl-auto: update #自动更新
+      show-sql: true  #日志中显示sql语句

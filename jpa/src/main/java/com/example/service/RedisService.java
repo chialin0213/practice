@@ -59,10 +59,8 @@ public class RedisService {
         return redisTemplate.hasKey(key);
     }
 
-    public Object get(final String key) {
-        Object result = null;
-        ValueOperations<String, Object> operations = redisTemplate.opsForValue();
-        result = operations.get(key);
-        return result;
+    public String get(final String key) {
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        return operations.get(key);
     }
 }
