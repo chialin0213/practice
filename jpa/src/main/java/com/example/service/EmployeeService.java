@@ -2,15 +2,23 @@ package com.example.service;
 
 import com.example.entity.Dept;
 import com.example.entity.Employee;
+import com.example.entity.Titles;
 import com.example.repository.DeptRepository;
 import com.example.repository.EmployeeRepository;
+import com.example.repository.TitlesRepository;
 import com.example.vo.EmployeeData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +37,9 @@ public class EmployeeService {
 
     @Autowired
     private DeptRepository deptRepository;
+
+    @Autowired
+    private TitlesRepository titlesRepository ;
 
     public List<Employee> findAll() throws JsonProcessingException {
         if(redisService.exists(EMPLOYEES_CACHE_KEY)){
@@ -61,9 +72,9 @@ public class EmployeeService {
     @Transactional
     public Employee saveEmployee(Employee employee){
         Employee emp = employeeRepository.save(employee);
+        List<Dept> dept = deptRepository.findByDeptNoNquery(employee.getDeptNo());
 
-        Optional<Dept> dept = deptRepository.findByDeptName(emp.getEmpTeam());
-        if(!dept.isPresent()) throw new RuntimeException("dept not exist");
+        if(dept == null || dept.isEmpty()) throw new RuntimeException("dept not exist");
 
         return emp ;
     }
@@ -87,4 +98,42 @@ public class EmployeeService {
     public List<EmployeeData> getAllEmployeeData() {
         return employeeRepository.getEmployeeData();
     }
+
+    public List<Employee> getAllEmployeeByPage(int page, int size){
+        Page<Employee> pageResult =employeeRepository.findAll(PageRequest.of(page,  // 查詢的頁數，從0起算
+                size, // 查詢的每頁筆數
+                Sort.by("empId").ascending()));
+
+        return pageResult.getContent();
+    }
+
+    public List<Employee> findByIdBetween(long empId, long empId2){
+        return employeeRepository.findByIdBetween(empId, empId2);
+    }
+
+    public List<Titles> findByTitle(String title){
+        return titlesRepository.findByTitle(title);
+    }
+
+    public List<Titles> findByTitleNative(String title){
+        return titlesRepository.findByTitleNative(title);
+    }
+
+    public List<Titles> findAllTitle(Titles titleDto, Pageable pageable){
+        return titlesRepository.findAllByPage(titleDto, pageable).getContent() ;
+    }
+
+    public void updateEmployeeNative(long empId, String empName){
+        employeeRepository.updateEmployee(empId, empName);
+    }
+
+    public void deleteEmployeeNative(long empId){
+        employeeRepository.deleteEmployee(empId);
+    }
+
+    public void insertEmployeeNative(Employee employee){
+        System.out.println("insert employee:"+employee.getEmpBirthDate());
+        employeeRepository.insertEmployee(employee.getEmpName(),"2023-11-23",employee.getGender());
+    }
+
 }

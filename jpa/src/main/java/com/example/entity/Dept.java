@@ -8,9 +8,8 @@ import javax.persistence.*;
 @Entity
 public class Dept {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "dept_id")
-    private long deptId ;
+    @Column(name = "dept_no")
+    private String deptNo ;
 
     @Column(name = "dept_name")
     private String deptName ;
