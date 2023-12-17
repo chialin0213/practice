@@ -10,24 +10,29 @@ import com.example.vo.EmployeeData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class EmployeeService {
+    private final SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final String EMPLOYEES_CACHE_KEY = "employee:all";
     private final String EMPLOYEE_CACHE_KEY = "employee:";
     private ObjectMapper objectMapper = new ObjectMapper() ;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private RedisService redisService ;
@@ -132,8 +137,23 @@ public class EmployeeService {
     }
 
     public void insertEmployeeNative(Employee employee){
-        System.out.println("insert employee:"+employee.getEmpBirthDate());
-        employeeRepository.insertEmployee(employee.getEmpName(),"2023-11-23",employee.getGender());
+        employeeRepository.insertEmployee(employee.getEmpName(),sdFormat.format(employee.getEmpBirthDate()),employee.getGender());
     }
 
+    public void modifyEmployee(long empId, String empName){
+        employeeRepository.modifyEmployee(empId, empName);
+    }
+
+    public void dropEmployee(long empId){
+        employeeRepository.dropEmployee(empId);
+    }
+
+    @Transactional
+    public void addEmployee(Employee employee){
+        entityManager.createNativeQuery("INSERT INTO Employee (emp_name, emp_birth_date, gender) VALUES (?,?,?)")
+                .setParameter(1, employee.getEmpName())
+                .setParameter(2, employee.getEmpBirthDate())
+                .setParameter(3, employee.getGender())
+                .executeUpdate();
+    }
 }

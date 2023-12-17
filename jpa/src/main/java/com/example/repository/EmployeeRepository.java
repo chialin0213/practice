@@ -34,13 +34,23 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     void deleteEmployee(@Param("empId") long empId);
 
+    @Modifying
+    @Transactional
+    @Query("delete from Employee e where e.empId=:empId")
+    void dropEmployee(@Param("empId") long empId);
+
     @Query(value = "insert into employee (emp_name, emp_birth_date, gender) VALUES (?1, ?2, ?3)", nativeQuery = true)
     @Modifying
     @Transactional
-    void insertEmployee(@Param("empName") String empName, @Param("empBirthDate") String empBirthDate, @Param("gender") String gender);
+    void insertEmployee(String empName, String empBirthDate, String gender);
 
     @Query("Select e From Employee e")
     List<Employee> getAllEmployee();
+
+    @Modifying
+    @Transactional
+    @Query("update Employee e set e.empName=:empName where e.empId=:empId")
+    void modifyEmployee(@Param("empId") long empId, @Param("empName") String empName);
 
     //將查詢結果封裝成 EmployeeData 物件
     @Query("SELECT NEW com.example.vo.EmployeeData(e.empId, e.empName) FROM Employee e")

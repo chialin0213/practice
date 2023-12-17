@@ -62,6 +62,12 @@ public class JpaController {
         return new ResponseEntity("新增成功", HttpStatus.OK);
     }
 
+    @PostMapping("/v3/employees")
+    public ResponseEntity<Object> addEmployee2(@RequestBody Employee employee) {
+        employeeService.addEmployee(employee);
+        return new ResponseEntity("新增成功", HttpStatus.OK);
+    }
+
     @DeleteMapping("/v1/employees/{id}")
     public ResponseEntity<Object> delEmployee(@PathVariable("id") Long empId) {
         return new ResponseEntity(employeeService.deleteEmployee(empId), HttpStatus.OK);
@@ -70,6 +76,12 @@ public class JpaController {
     @DeleteMapping("/v2/employees/{id}")
     public ResponseEntity<Object> delEmployee1(@PathVariable("id") Long empId) {
         employeeService.deleteEmployeeNative(empId);
+        return new ResponseEntity("刪除成功", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/v3/employees/{id}")
+    public ResponseEntity<Object> delEmployee2(@PathVariable("id") Long empId) {
+        employeeService.dropEmployee(empId);
         return new ResponseEntity("刪除成功", HttpStatus.OK);
     }
 
@@ -91,6 +103,15 @@ public class JpaController {
         if(emp == null) return new ResponseEntity("employee not found.", HttpStatus.OK);
 
         employeeService.updateEmployeeNative(empId, employee.getEmpName());
+        return new ResponseEntity("更新成功", HttpStatus.OK);
+    }
+
+    @PutMapping("/v3/employees/{id}")
+    public ResponseEntity<Object> updateEmployee3(@PathVariable("id") Long empId, @RequestBody Employee employee) throws JsonProcessingException {
+        Employee emp = employeeService.findByEmpId(empId);
+        if(emp == null) return new ResponseEntity("employee not found.", HttpStatus.OK);
+
+        employeeService.modifyEmployee(empId, employee.getEmpName());
         return new ResponseEntity("更新成功", HttpStatus.OK);
     }
 
