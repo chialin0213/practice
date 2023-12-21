@@ -23,7 +23,8 @@
 		<module>Instant</module>
 		<module>swagger</module>
 		<module>jpa</module>
-	</modules>
+        <module>Java</module>
+    </modules>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
